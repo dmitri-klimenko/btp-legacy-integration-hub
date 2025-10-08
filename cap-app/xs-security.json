@@ -1,0 +1,12 @@
+{
+  "xsappname": "legacy-ecc-cap",
+  "tenant-mode": "shared",
+  "scopes": [
+    { "name": "$XSAPPNAME.Viewer", "description": "Read access" },
+    { "name": "$XSAPPNAME.Admin", "description": "Full access" }
+  ],
+  "role-templates": [
+    { "name": "Viewer", "description": "Can view data", "scope-references": ["$XSAPPNAME.Viewer"] },
+    { "name": "Admin", "description": "Can manage data", "scope-references": ["$XSAPPNAME.Admin"] }
+  ]
+}

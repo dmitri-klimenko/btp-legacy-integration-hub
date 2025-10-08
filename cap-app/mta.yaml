@@ -1,0 +1,25 @@
+ID: legacy-ecc-cap
+_schema-version: "3.1"
+version: 1.0.0
+
+modules:
+  - name: legacy-cap-srv
+    type: nodejs
+    path: .
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+    provides:
+      - name: legacy-cap-api
+        properties:
+          url: ${default-url}
+    requires:
+      - name: xsuaa-service
+
+resources:
+  - name: xsuaa-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json

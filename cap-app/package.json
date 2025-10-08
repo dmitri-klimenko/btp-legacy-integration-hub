@@ -1,0 +1,29 @@
+{
+  "name": "cap-app",
+  "version": "1.0.0",
+  "description": "Mock ECC CAP service for BTP Legacy Integration Hub",
+  "dependencies": {
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4.10.0",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "auth": {
+        "[development]": {
+          "kind": "dummy"
+        },
+        "[production]": {
+          "kind": "xsuaa"
+        }
+      }
+    }
+  },
+  "private": true
+}
