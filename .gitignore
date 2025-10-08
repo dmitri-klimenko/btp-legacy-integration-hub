@@ -1,0 +1,27 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+package-lock.json
+
+# CAP build artifacts
+mta_archives/
+gen/
+dist/
+default-env.json
+*.mtar
+
+# Local testing data
+legacy-*/
+*.sqlite
+*.db
+*.csv~
+
+# BAS/VSCode project files
+.vscode/
+.idea/
+.DS_Store
+
+# Environment / credentials
+.env
+*.key
+*.pem
