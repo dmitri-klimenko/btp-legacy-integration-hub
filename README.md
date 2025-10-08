@@ -8,15 +8,15 @@ End-to-end **SAP Business Technology Platform (BTP)** scenario connecting a simu
 
 ## 📖 Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Architecture](#architecture)
-3. [Technologies Used](#technologies-used)
-4. [Business Scenario](#business-scenario)
-5. [Repository Structure](#repository-structure)
-6. [Setup Instructions](#setup-instructions)
-7. [Security & Roles](#security--roles)
-8. [Clean Core Principles](#clean-core-principles)
-9. [Next Steps](#next-steps)
+1. [Project Overview](#-project-overview)
+2. [Architecture](#️-architecture)
+3. [Technologies Used](#-technologies-used)
+4. [Business Scenario](#-business-scenario)
+5. [Repository Structure](#-repository-structure)
+6. [Setup Instructions](#-setup-instructions)
+7. [Security & Roles](#-security--roles)
+8. [Clean Core Principles](#-clean-core-principles)
+9. [Next Steps](#-next-steps)
 
 ---
 
