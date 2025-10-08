@@ -2,11 +2,29 @@
   "xsappname": "legacy-ecc-cap",
   "tenant-mode": "shared",
   "scopes": [
-    { "name": "$XSAPPNAME.Viewer", "description": "Read access" },
-    { "name": "$XSAPPNAME.Admin", "description": "Full access" }
+    { 
+      "name": "$XSAPPNAME.Viewer", 
+      "description": "Read access"
+    },
+    { 
+      "name": "$XSAPPNAME.Admin", 
+      "description": "Full access"
+    }
+  ],
+  "authorities": [
+    "$XSAPPNAME.Viewer",
+    "$XSAPPNAME.Admin"
   ],
   "role-templates": [
-    { "name": "Viewer", "description": "Can view data", "scope-references": ["$XSAPPNAME.Viewer"] },
-    { "name": "Admin", "description": "Can manage data", "scope-references": ["$XSAPPNAME.Admin"] }
+    { 
+      "name": "Viewer", 
+      "description": "Can view data", 
+      "scope-references": ["$XSAPPNAME.Viewer"] 
+    },
+    { 
+      "name": "Admin", 
+      "description": "Can manage data", 
+      "scope-references": ["$XSAPPNAME.Admin"] 
+    }
   ]
 }
