@@ -9,6 +9,13 @@ modules:
     parameters:
       memory: 256M
       disk-quota: 512M
+    build-parameters:
+      before-all:
+        - builder: custom
+          commands:
+            - npm install --production
+            - npx -p @sap/cds-dk cds build --production
+            - cp -r db/data gen/srv/srv/data
     provides:
       - name: legacy-cap-api
         properties:

@@ -6,7 +6,8 @@
     "@cap-js/sqlite": "^2",
     "@sap/cds": "^9",
     "@sap/xssec": "^4.10.0",
-    "express": "^4"
+    "express": "^4",
+    "sqlite3": "^5.0.2"
   },
   "scripts": {
     "start": "cds-serve"
@@ -26,6 +27,9 @@
           "kind": "xsuaa"
         }
       }
+    },
+    "features": {
+      "in_memory_db": true
     }
   },
   "private": true
