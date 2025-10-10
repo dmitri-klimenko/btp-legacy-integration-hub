@@ -12,5 +12,5 @@ entity Orders {
   Amount     : Decimal(10,2);
   Currency   : String(3);
   Status     : String(20);
-  CreatedAt  : Timestamp;
+  CreatedAt  : Timestamp @cds.on.insert : $now;
 }

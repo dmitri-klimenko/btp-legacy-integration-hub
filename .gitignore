@@ -13,6 +13,8 @@ default-env.json
 # Local testing data
 legacy-*/
 *.sqlite
+*.sqlite-shm
+*.sqlite-wal
 *.db
 *.csv~
 
