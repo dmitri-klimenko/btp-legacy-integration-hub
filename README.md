@@ -167,12 +167,6 @@ btp-legacy-integration-hub/
 }
 ```
 
-Bind XSUAA service to CAP app:
-
-```bash
-cf bind-service cap-app xsuaa-service
-```
-
 ---
 
 ## 🧱 Clean Core Principles
@@ -183,11 +177,3 @@ cf bind-service cap-app xsuaa-service
 - **Cloud-native data persistence** in HANA Cloud
 - **Separation of concerns** between legacy, integration, and data layers
 - **Scalable, maintainable architecture** on SAP BTP
-
----
-
-## 👤 Author
-
-**Dmytro Klymenko**  
-SAP BTP Architect & Integration Specialist  
-Focused on clean-core integration patterns and data synchronization solutions.
