@@ -16,8 +16,7 @@ End-to-end **SAP Business Technology Platform (BTP)** scenario connecting a simu
 6. [Setup Instructions](#-setup-instructions)
 7. [Security & Roles](#-security--roles)
 8. [Clean Core Principles](#-clean-core-principles)
-9. [Next Steps](#-next-steps)
-10. [Author](#-author)
+9. [Author](#-author)
 
 ---
 
@@ -45,15 +44,6 @@ Integration Suite iFlow (Timer → REST → Transform → JDBC)
 SAP HANA Cloud (Synchronized Data Persistence)
 ```
 
-### ✅ Implementation Status
-
-| Layer | Status | Description |
-|-------|--------|-------------|
-| **Legacy System (CAP)** | ✅ Complete | CAP app exposes `/Orders` and `/Customers` as OData services, secured via XSUAA |
-| **Integration Layer** | ✅ Complete | iFlow polls legacy system, transforms data, and persists to HANA Cloud |
-| **Database Layer (HANA Cloud)** | ✅ Complete | Schema `POLLING_DEMO` with synchronized order and customer data |
-
----
 
 ## 🧰 Technologies Used
 
@@ -193,32 +183,6 @@ cf bind-service cap-app xsuaa-service
 - **Cloud-native data persistence** in HANA Cloud
 - **Separation of concerns** between legacy, integration, and data layers
 - **Scalable, maintainable architecture** on SAP BTP
-
----
-
-## 🪴 Next Steps
-
-This project provides a solid foundation for SAP BTP integration scenarios. Potential extensions include:
-
-1. **Advanced data transformations**
-   - Complex field mappings and data enrichment
-   - Error handling and retry mechanisms
-
-2. **Extended integration patterns**
-   - Event-driven integration with SAP Event Mesh
-   - Real-time data streaming
-
-3. **Enhanced security**
-   - Principal propagation
-   - Advanced OAuth2 flows
-
-4. **Monitoring and observability**
-   - Integration Suite monitoring
-   - Custom dashboards and alerts
-
-5. **Extension applications**
-   - ABAP RAP applications on top of synchronized data
-   - SAP Fiori applications for data visualization
 
 ---
 
