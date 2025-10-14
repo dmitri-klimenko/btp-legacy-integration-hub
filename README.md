@@ -1,62 +1,101 @@
 # 🚀 BTP Legacy Integration Hub
 
-End-to-end **SAP Business Technology Platform (BTP)** scenario connecting a simulated **legacy ECC system** with **SAP HANA Cloud** using **Integration Suite**, **CAP**, and **XSUAA**.
+**A complete SAP BTP integration solution** demonstrating clean-core data synchronization between legacy ECC systems and SAP HANA Cloud.
 
-**Goal:** Demonstrate a clean-core integration approach — extracting, transforming, and persisting legacy data in HANA Cloud without modifying ECC systems.
-
----
-
-## 📖 Table of Contents
-
-1. [Project Overview](#-project-overview)
-2. [Architecture](#️-architecture)
-3. [Technologies Used](#-technologies-used)
-4. [Business Scenario](#-business-scenario)
-5. [Repository Structure](#-repository-structure)
-6. [Setup Instructions](#-setup-instructions)
-7. [Security & Roles](#-security--roles)
-8. [Clean Core Principles](#-clean-core-principles)
-9. [Author](#-author)
+This project showcases a **production-ready integration pattern** using SAP Integration Suite, CAP services, and XSUAA security to extract, transform, and persist legacy data without system modifications.
 
 ---
 
-## 🧩 Project Overview
+## 🎯 What This Solution Does
 
-This project demonstrates an **end-to-end integration from a simulated legacy ECC system to SAP HANA Cloud** using SAP BTP as the integration platform.
-
-**Key capabilities:**
-- Simulate legacy ECC system using CAP application with OAuth2 security
-- Extract and transform data via Integration Suite iFlow
-- Persist synchronized data in SAP HANA Cloud database
-- Secure APIs with XSUAA authentication
-
----
+✅ **Legacy System Simulation** - CAP-based mock ECC system with realistic customer and order data  
+✅ **Secure API Access** - OAuth2/XSUAA authentication protecting all endpoints  
+✅ **Automated Data Sync** - Timer-based integration flow polling and transforming data  
+✅ **Cloud Persistence** - Real-time data synchronization to HANA Cloud database  
+✅ **Production-Ready** - Deployable to Cloud Foundry with proper security configuration
 
 ## 🏗️ Architecture
 
-The solution demonstrates a **clean-core integration pipeline**:
-
 ```
-Legacy ECC Simulation (CAP Node.js + XSUAA)
-          ↓
-Integration Suite iFlow (Timer → REST → Transform → JDBC)
-          ↓
-SAP HANA Cloud (Synchronized Data Persistence)
+🏢 Legacy ECC (CAP + XSUAA)  →  🔄 Integration Suite  →  ☁️ HANA Cloud
+   OAuth2-secured APIs           Timer + Transform         Synchronized Data
 ```
 
+**Data Flow:**
+1. **CAP Service** exposes `/Customers` and `/Orders` as secured OData endpoints
+2. **Integration Flow** polls APIs every minute, transforms JSON to SQL format
+3. **HANA Cloud** stores synchronized data in `POLLING_DEMO` schema
 
-## 🧰 Technologies Used
+## 🧰 Technology Stack
 
-| Layer | Service/Tool | Purpose |
-|-------|---------------|----------|
-| **Integration** | SAP Integration Suite | Data polling, transformation, and persistence via JDBC adapter |
-| **Data** | SAP HANA Cloud | Central data store for synchronized business data |
-| **Backend** | SAP CAP (Node.js) | Simulated legacy ECC system with OData APIs |
-| **Security** | SAP XSUAA | OAuth2 authentication and role-based access control |
-| **Runtime** | Cloud Foundry | Deployment platform for CAP applications |
-| **Dev Environment** | Business Application Studio | Development workspace for CAP & Integration Suite |
+| Component | Technology | Implementation |
+|-----------|------------|----------------|
+| **Legacy Simulation** | SAP CAP (Node.js) | OData services with sample business data |
+| **API Security** | SAP XSUAA | OAuth2 authentication and role-based access |
+| **Integration** | SAP Integration Suite | Timer-triggered iFlow with Groovy transformations |
+| **Data Storage** | SAP HANA Cloud | Synchronized tables with timestamp tracking |
+| **Deployment** | Cloud Foundry | MTA-based deployment with service bindings |
+
+## 📊 Key Features
+
+### **🔐 Enterprise Security**
+- OAuth2 client credentials flow
+- Role-based access control (Viewer/Admin roles)
+- Secure service-to-service communication
+
+### **🔄 Intelligent Integration**
+- Automated polling with configurable intervals
+- Data transformation and enrichment via Groovy scripts
+
+### **📈 Real-time Synchronization**
+- Timestamp-based change detection
+- Incremental data updates
+- JDBC-based persistence to HANA Cloud
+
+## 📁 Solution Components
+```
+btp-legacy-integration-hub/
+├── cap-app/                           # Legacy ECC Simulation
+│   ├── db/schema.cds                  # Customer & Order data models
+│   ├── srv/legacy-service.cds         # OData service definitions
+│   ├── xs-security.json               # OAuth2 security configuration
+│   └── mta.yaml                       # Cloud Foundry deployment descriptor
+├── integration-suite/iflow/           # Data Synchronization Logic
+│   ├── HasNewData.groovy              # Validates if Legacy system has new Orders
+│   ├── LogAndModify.groovy            # Enriches Orders with TotalWithTax and Priority, logs original and     modified data
+│   ├── SetTimestampFromMessage.groovy # Retrieves last sync timestamp from data store, if no data, sets default value, sets exchange property
+│   ├── SetTimestampToMessage.groovy   # Generates current UTC timestamp for tracking and sets the message's body with the value
+│   └── TransformOrdersToSQL.groovy    # Converts fetched JSON data to SQL INSERT statements
+├── hana-cloud/schema/                 # Database Schema
+│   └── createSchemaAndTable.sql       # POLLING_DEMO schema and table creation script
+└── docs/demo-screenshots/             # Visual documentation
+```
+
+## 🎯 Business Value
+
+**Clean-Core Integration Pattern:**
+- ✅ **Zero Legacy Modification** - No changes to existing ECC systems
+- ✅ **API-First Approach** - Modern REST/OData integration
+- ✅ **Cloud-Native Security** - Enterprise-grade OAuth2 implementation
+- ✅ **Real-Time Insights** - Up-to-date business data in cloud analytics
+
+**Use Cases:**
+- Legacy system modernization during S/4HANA migration
+- Real-time reporting and analytics on legacy data
+- Side-by-side extension development
+- Proof-of-concept for clean-core architecture
+
+## 🚀 Live Demo
+
+This solution is **fully deployed and operational** on SAP BTP, demonstrating:
+
+- **Active data synchronization** between mock ECC and HANA Cloud
+- **Secure API endpoints** protected by XSUAA authentication
+- **Real-time monitoring** via Integration Suite dashboards
+- **Scalable cloud deployment** on Cloud Foundry platform
 
 ---
+
 
 ## 💼 Business Scenario
 
@@ -88,11 +127,11 @@ btp-legacy-integration-hub/
 │   └── eslint.config.mjs              # ESLint configuration
 ├── integration-suite/
 │   └── iflow/                         # Integration flow Groovy scripts
-│       ├── HasNewData.groovy          # Check for new data logic
-│       ├── LogAndModify.groovy        # Logging and data modification
-│       ├── SetTimestampFromMessage.groovy  # Extract timestamp from message
-│       ├── SetTimestampToMessage.groovy    # Set timestamp to message
-│       └── TransformOrdersToSQL.groovy     # Transform orders to SQL format
+│       ├── HasNewData.groovy          # Validates if OData response contains records
+│       ├── LogAndModify.groovy        # Data enrichment (tax calc, priority assignment)
+│       ├── SetTimestampFromMessage.groovy  # Retrieves last synchronization timestamp
+│       ├── SetTimestampToMessage.groovy    # Generates current UTC timestamp
+│       └── TransformOrdersToSQL.groovy     # JSON to SQL batch INSERT transformation
 ├── hana-cloud/
 │   └── schema/
 │       └── createSchemaAndTable.sql   # HANA database schema creation
@@ -102,78 +141,3 @@ btp-legacy-integration-hub/
 └── README.md
 ```
 
----
-
-## 🧠 Setup Instructions
-
-### Prerequisites
-
-- SAP BTP Trial or PAYG account (region: eu10 or us10)
-- Cloud Foundry enabled
-- Business Application Studio or local dev setup (Node.js 18+, cf CLI, cds)
-
-### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/btp-legacy-integration-hub.git
-   cd btp-legacy-integration-hub
-   ```
-
-2. **Deploy HANA Cloud instance**
-   - Create schema `POLLING_DEMO`
-   - Execute the SQL scripts from `hana-cloud/schema/`
-
-3. **Run the mock ECC API**
-   ```bash
-   cd cap-app
-   cds watch
-   ```
-
-4. **Deploy CAP app to Cloud Foundry**
-   ```bash
-   mbt build
-   cf deploy mta_archives/<file>.mtar
-   ```
-
-5. **Import and deploy the Integration Flow**
-   - Timer start event (configurable interval)
-   - REST call to CAP API endpoints (`/Orders`, `/Customers`)
-   - Data transformation and enrichment
-   - JDBC adapter to persist data in HANA Cloud
-
-6. **Verify data synchronization**
-   - Check HANA Cloud database for synchronized data
-   - Test OAuth2-secured endpoints
-
----
-
-## 🔐 Security & Roles
-
-`xs-security.json` configuration:
-
-```json
-{
-  "xsappname": "btp-legacy-integration-hub",
-  "tenant-mode": "shared",
-  "scopes": [
-    { "name": "$XSAPPNAME.Viewer", "description": "Read access" },
-    { "name": "$XSAPPNAME.Admin", "description": "Full access" }
-  ],
-  "role-templates": [
-    { "name": "Viewer", "description": "Can view data", "scope-references": ["$XSAPPNAME.Viewer"] },
-    { "name": "Admin", "description": "Can manage data", "scope-references": ["$XSAPPNAME.Admin"] }
-  ]
-}
-```
-
----
-
-## 🧱 Clean Core Principles
-
-- **No modification** of legacy ECC system
-- **API-first approach** for data extraction
-- **Secure integration** with OAuth2 and XSUAA
-- **Cloud-native data persistence** in HANA Cloud
-- **Separation of concerns** between legacy, integration, and data layers
-- **Scalable, maintainable architecture** on SAP BTP
