@@ -6,19 +6,19 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 
 ---
 
-## 🎯 What This Solution Does
+## What This Solution Does
 
 ✅ **Legacy System Simulation** - CAP-based mock ECC system with realistic customer and order data  
 ✅ **Secure API Access** - OAuth2/XSUAA authentication protecting all endpoints  
 ✅ **Automated Data Sync** - Timer-based integration flow polling and transforming data  
 ✅ **Cloud Persistence** - Real-time data synchronization to HANA Cloud database  
-✅ **Modern UI Experience** - Fiori Elements app for business users to view and manage data
+✅ **Modern UI Experience** - Fiori Elements app for business users to view and manage data  
 ✅ **Production-Ready** - Deployable to Cloud Foundry with proper security configuration
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-🏢 Legacy ECC (CAP + XSUAA)  →  🔄 Integration Suite  →  ☁️ HANA Cloud
+Legacy ECC (CAP + XSUAA)  →  🔄 Integration Suite  →  ☁️ HANA Cloud
    OAuth2-secured APIs           Timer + Transform         Synchronized Data
                     ↓
              📱 Fiori Elements App
@@ -31,7 +31,7 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 3. **HANA Cloud** stores synchronized data in `POLLING_DEMO` schema
 4. **Fiori App** provides modern UI for business users to view and manage orders
 
-## 🧰 Technology Stack
+## Technology Stack
 
 | Component | Technology | Implementation |
 |-----------|------------|----------------|
@@ -42,9 +42,9 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 | **User Interface** | SAP Fiori Elements | List Report & Object Page for Orders management |
 | **Deployment** | Cloud Foundry | MTA-based deployment with service bindings |
 
-## 📊 Key Features
+## Key Features
 
-### **🔐 Enterprise Security**
+### **Enterprise Security**
 - OAuth2 client credentials flow
 - Role-based access control (Viewer/Admin roles)
 - Tested authorization enforcement in Fiori UI:
@@ -53,16 +53,16 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 - Role Collections assignment and testing completed
 - Secure service-to-service communication
 
-### **🔄 Intelligent Integration**
+### **Intelligent Integration**
 - Automated polling with configurable intervals
 - Data transformation and enrichment via Groovy scripts
 
-### **📈 Real-time Synchronization**
+### **Real-time Synchronization**
 - Timestamp-based change detection
 - Incremental data updates
 - JDBC-based persistence to HANA Cloud
 
-### **🎨 Modern User Experience**
+### **Modern User Experience**
 - Fiori Elements List Report and Object Page pattern
 - Draft-enabled editing capabilities with custom fields (Notes column)
 - Role-based UI access with tested authorization restrictions
@@ -71,7 +71,7 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 - Role Collections properly configured and tested in BTP Cockpit
 - Responsive design for desktop and mobile
 
-## 📁 Solution Components
+## Solution Components
 ```
 btp-legacy-integration-hub/
 ├── cap-app/                           # Legacy ECC Simulation & UI Host
@@ -96,7 +96,7 @@ btp-legacy-integration-hub/
 └── docs/demo-screenshots/             # Visual documentation
 ```
 
-## 🎯 Business Value
+## Business Value
 
 **Clean-Core Integration Pattern:**
 - ✅ **Zero Legacy Modification** - No changes to existing ECC systems
@@ -112,7 +112,7 @@ btp-legacy-integration-hub/
 - Security testing and authorization validation in enterprise scenarios
 - Proof-of-concept for clean-core architecture
 
-## 🚀 Live Demo
+## Live Demo
 
 This solution is **fully deployed and operational** on SAP BTP, demonstrating:
 
@@ -127,7 +127,7 @@ This solution is **fully deployed and operational** on SAP BTP, demonstrating:
 ---
 
 
-## 💼 Business Scenario
+## Business Scenario
 
 A manufacturing company needs to **synchronize data from their legacy SAP ECC system** to **SAP HANA Cloud** for reporting and analytics purposes.
 
@@ -138,6 +138,4 @@ The legacy system cannot be modified, so SAP BTP acts as the **integration bridg
 - Secure data synchronization to cloud database
 - OAuth2-secured APIs and data access
 - Real-time data transformation and enrichment  
-
----
 
