@@ -1,33 +1,181 @@
-ID: legacy-ecc-cap
 _schema-version: "3.1"
+ID: legacy-ecc-cap
 version: 1.0.0
 
+# ============================================================================
+# MODULES - Applications and content deployed to Cloud Foundry
+# ============================================================================
 modules:
+  # --------------------------------------------------------------------------
+  # BACKEND SERVICE - CAP Node.js application with OData service
+  # --------------------------------------------------------------------------
   - name: legacy-cap-srv
     type: nodejs
     path: .
+    requires:
+      - name: xsuaa-service  # Authentication service
+    provides:
+      - name: legacy-cap-api  # Makes backend URL available to other modules
+        properties:
+          url: ${default-url}
+      - name: srv-api  # Alternative name for destination service
+        properties:
+          srv-url: ${default-url}
     parameters:
-      memory: 256M
       disk-quota: 512M
+      memory: 256M
     build-parameters:
       before-all:
         - builder: custom
           commands:
             - npm install --production
             - npx cds build --production
-            - cp -r db/data gen/srv/srv/data
-            - cp -r db.sqlite gen/srv
-    provides:
-      - name: legacy-cap-api
-        properties:
-          url: ${default-url}
-    requires:
-      - name: xsuaa-service
+            - cp -r db/data gen/srv/srv/data  # Copy seed data
+            - cp -r db.sqlite gen/srv  # Copy SQLite database
 
+  # --------------------------------------------------------------------------
+  # DESTINATION CONFIGURATION - Creates destinations in BTP Cockpit
+  # --------------------------------------------------------------------------
+  - name: legacy-ecc-cap-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: legacy-ecc-cap-destination-service
+        parameters:
+          content-target: true
+      - name: legacy-ecc-cap_html_repo_host  # For HTML5 app access
+        parameters:
+          service-key:
+            name: legacy-ecc-cap_html_repo_host-key
+      - name: xsuaa-service  # For authentication tokens
+        parameters:
+          service-key:
+            name: xsuaa-service-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            # Destination for HTML5 app repository
+            - Name: Legacy_legacy_ecc_cap_html_repo_host
+              ServiceInstanceName: legacy-ecc-cap-html5-app-host-service
+              ServiceKeyName: legacy-ecc-cap_html_repo_host-key
+              sap.cloud.service: Legacy
+            # Destination for XSUAA authentication
+            - Authentication: OAuth2UserTokenExchange
+              Name: Legacy_xsuaa_service
+              ServiceInstanceName: xsuaa-service
+              ServiceKeyName: xsuaa-service-key
+              sap.cloud.service: Legacy
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true  # No source code to build
+
+  # --------------------------------------------------------------------------
+  # HTML5 APP DEPLOYER - Uploads UI apps to HTML5 repository
+  # --------------------------------------------------------------------------
+  - name: legacy-ecc-cap-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: legacy-ecc-cap_html_repo_host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - ordersuimodule.zip  # Built Fiori app
+          name: ordersuimodule
+          target-path: resources/
+
+  # --------------------------------------------------------------------------
+  # FIORI UI MODULE - Orders management UI
+  # --------------------------------------------------------------------------
+  - name: ordersuimodule
+    type: html5
+    path: app/orders_ui_module
+    build-parameters:
+      build-result: dist  # Output folder
+      builder: custom
+      commands:
+        - npm install  # Install UI5 dependencies
+        - npm run build:cf  # Build for Cloud Foundry
+      supported-platforms: []
+
+# ============================================================================
+# RESOURCES - Services provisioned in BTP (databases, auth, etc.)
+# ============================================================================
 resources:
+  # --------------------------------------------------------------------------
+  # XSUAA SERVICE - Authentication and Authorization
+  # --------------------------------------------------------------------------
   - name: xsuaa-service
     type: org.cloudfoundry.managed-service
     parameters:
+      path: ./xs-security.json  # Security configuration (scopes, roles)
       service: xsuaa
       service-plan: application
-      path: ./xs-security.json
+      config:
+        xsappname: cap-app-${org}-${space}  # Unique app name per org/space
+        tenant-mode: dedicated  # Single tenant mode
+
+  # --------------------------------------------------------------------------
+  # DESTINATION SERVICE - Manages connections
+  # --------------------------------------------------------------------------
+  - name: legacy-ecc-cap-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true  # Enable HTML5 app repository runtime
+        init_data:
+          instance:
+            destinations:
+              # UI5 libraries from SAP CDN
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+              # Backend OData service
+              - Authentication: NoAuthentication
+                HTML5.DynamicDestination: true  # Resolved at runtime
+                HTML5.ForwardAuthToken: true  # Pass auth token to backend
+                Name: srv-api
+                ProxyType: Internet
+                Type: HTTP
+                URL: ~{srv-api/srv-url}  # References backend URL
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: legacy-ecc-cap-destination-service
+      service-plan: lite
+    requires:
+      - name: srv-api  # Reference to backend service URL
+
+  # --------------------------------------------------------------------------
+  # HTML5 APP REPOSITORY - Hosts Fiori UI applications
+  # --------------------------------------------------------------------------
+  - name: legacy-ecc-cap_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: legacy-ecc-cap-html5-app-host-service
+      service-plan: app-host  # For storing/hosting HTML5 apps
+
+# ============================================================================
+# GLOBAL PARAMETERS
+# ============================================================================
+parameters:
+  deploy_mode: html5-repo  # Use HTML5 app repository for UI deployment
+  enable-parallel-deployments: true  # Speed up deployment
+
+description: "Mock ECC CAP service for BTP Legacy Integration Hub"
+
+# ============================================================================
+# BUILD CONFIGURATION - Runs before building any module
+# ============================================================================
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci  # Clean install dependencies
+        - npx cds build --production  # Build CAP application

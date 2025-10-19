@@ -1,14 +1,19 @@
 {
   "xsappname": "legacy-ecc-cap",
-  "tenant-mode": "shared",
+  "tenant-mode": "dedicated",
+  "description": "Security profile for Legacy ECC CAP application",
   "scopes": [
-    { 
-      "name": "$XSAPPNAME.Viewer", 
+    {
+      "name": "$XSAPPNAME.Viewer",
       "description": "Read access"
     },
-    { 
-      "name": "$XSAPPNAME.Admin", 
+    {
+      "name": "$XSAPPNAME.Admin",
       "description": "Full access"
+    },
+    {
+      "name": "uaa.user",
+      "description": "UAA user scope"
     }
   ],
   "authorities": [
@@ -16,15 +21,43 @@
     "$XSAPPNAME.Admin"
   ],
   "role-templates": [
-    { 
-      "name": "Viewer", 
-      "description": "Can view data", 
-      "scope-references": ["$XSAPPNAME.Viewer"] 
+    {
+      "name": "Viewer",
+      "description": "Can view data",
+      "scope-references": [
+        "$XSAPPNAME.Viewer"
+      ]
     },
-    { 
-      "name": "Admin", 
-      "description": "Can manage data", 
-      "scope-references": ["$XSAPPNAME.Admin"] 
+    {
+      "name": "Admin",
+      "description": "Can manage data",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "name": "Token_Exchange",
+      "description": "Token exchange for service-to-service communication",
+      "scope-references": [
+        "uaa.user"
+      ]
     }
-  ]
+  ],
+  "role-collections": [
+    {
+      "name": "legacy-ecc-cap-Viewer",
+      "description": "Viewer role collection",
+      "role-template-references": [
+        "$XSAPPNAME.Viewer"
+      ]
+    },
+    {
+      "name": "legacy-ecc-cap-Admin",
+      "description": "Admin role collection",
+      "role-template-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "attributes": []
 }

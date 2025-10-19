@@ -13,4 +13,5 @@ entity Orders {
   Currency   : String(3);
   Status     : String(20);
   CreatedAt  : Timestamp @cds.on.insert : $now;
+  Notes      : String(255);
 }

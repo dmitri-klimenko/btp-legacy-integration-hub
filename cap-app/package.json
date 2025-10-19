@@ -13,7 +13,8 @@
     "start": "cds-serve"
   },
   "cds": {
-    "requires": {"db": {
+    "requires": {
+      "db": {
         "kind": "sqlite",
         "impl": "@cap-js/sqlite",
         "credentials": {
@@ -22,7 +23,21 @@
       },
       "auth": {
         "[development]": {
-          "kind": "dummy"
+          "kind": "mocked",
+          "users": {
+            "admin": {
+              "password": "admin",
+              "roles": [
+                "Admin"
+              ]
+            },
+            "viewer": {
+              "password": "viewer",
+              "roles": [
+                "Viewer"
+              ]
+            }
+          }
         },
         "[production]": {
           "kind": "xsuaa"
@@ -30,5 +45,8 @@
       }
     }
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@sap/cds-dk": "^9.4.1"
+  }
 }
