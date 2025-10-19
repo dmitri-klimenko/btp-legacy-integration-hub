@@ -12,6 +12,7 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 ✅ **Secure API Access** - OAuth2/XSUAA authentication protecting all endpoints  
 ✅ **Automated Data Sync** - Timer-based integration flow polling and transforming data  
 ✅ **Cloud Persistence** - Real-time data synchronization to HANA Cloud database  
+✅ **Modern UI Experience** - Fiori Elements app for business users to view and manage data
 ✅ **Production-Ready** - Deployable to Cloud Foundry with proper security configuration
 
 ## 🏗️ Architecture
@@ -19,12 +20,16 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 ```
 🏢 Legacy ECC (CAP + XSUAA)  →  🔄 Integration Suite  →  ☁️ HANA Cloud
    OAuth2-secured APIs           Timer + Transform         Synchronized Data
+                    ↓
+             📱 Fiori Elements App
+              Business User Interface
 ```
 
-**Data Flow:**
+**Complete Data Flow:**
 1. **CAP Service** exposes `/Customers` and `/Orders` as secured OData endpoints
 2. **Integration Flow** polls APIs every minute, transforms JSON to SQL format
 3. **HANA Cloud** stores synchronized data in `POLLING_DEMO` schema
+4. **Fiori App** provides modern UI for business users to view and manage orders
 
 ## 🧰 Technology Stack
 
@@ -34,6 +39,7 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 | **API Security** | SAP XSUAA | OAuth2 authentication and role-based access |
 | **Integration** | SAP Integration Suite | Timer-triggered iFlow with Groovy transformations |
 | **Data Storage** | SAP HANA Cloud | Synchronized tables with timestamp tracking |
+| **User Interface** | SAP Fiori Elements | List Report & Object Page for Orders management |
 | **Deployment** | Cloud Foundry | MTA-based deployment with service bindings |
 
 ## 📊 Key Features
@@ -41,6 +47,10 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 ### **🔐 Enterprise Security**
 - OAuth2 client credentials flow
 - Role-based access control (Viewer/Admin roles)
+- Tested authorization enforcement in Fiori UI:
+  - Viewer: Read-only access, cannot edit Notes or other fields
+  - Admin: Full edit capabilities including Notes field
+- Role Collections assignment and testing completed
 - Secure service-to-service communication
 
 ### **🔄 Intelligent Integration**
@@ -52,12 +62,27 @@ This project showcases a **production-ready integration pattern** using SAP Inte
 - Incremental data updates
 - JDBC-based persistence to HANA Cloud
 
+### **🎨 Modern User Experience**
+- Fiori Elements List Report and Object Page pattern
+- Draft-enabled editing capabilities with custom fields (Notes column)
+- Role-based UI access with tested authorization restrictions
+- Viewer role: Read-only access (edit restrictions enforced)
+- Admin role: Full CRUD operations including Notes field editing
+- Role Collections properly configured and tested in BTP Cockpit
+- Responsive design for desktop and mobile
+
 ## 📁 Solution Components
 ```
 btp-legacy-integration-hub/
-├── cap-app/                           # Legacy ECC Simulation
+├── cap-app/                           # Legacy ECC Simulation & UI Host
+│   ├── app/
+│   │   ├── orders_ui_module/          # Fiori Elements Orders Management App
+│   │   │   ├── webapp/                # UI5 application source
+│   │   │   ├── annotations.cds        # UI annotations for Fiori Elements
+│   │   │   └── manifest.json          # App configuration and routing
+│   │   └── services.cds               # UI service definitions
 │   ├── db/schema.cds                  # Customer & Order data models
-│   ├── srv/legacy-service.cds         # OData service definitions
+│   ├── srv/legacy-service.cds         # OData service definitions with role-based authorization
 │   ├── xs-security.json               # OAuth2 security configuration
 │   └── mta.yaml                       # Cloud Foundry deployment descriptor
 ├── integration-suite/iflow/           # Data Synchronization Logic
@@ -83,6 +108,8 @@ btp-legacy-integration-hub/
 - Legacy system modernization during S/4HANA migration
 - Real-time reporting and analytics on legacy data
 - Side-by-side extension development
+- Modern UI for business process management with role-based editing
+- Security testing and authorization validation in enterprise scenarios
 - Proof-of-concept for clean-core architecture
 
 ## 🚀 Live Demo
@@ -90,7 +117,10 @@ btp-legacy-integration-hub/
 This solution is **fully deployed and operational** on SAP BTP, demonstrating:
 
 - **Active data synchronization** between mock ECC and HANA Cloud
-- **Secure API endpoints** protected by XSUAA authentication
+- **Secure API endpoints** protected by XSUAA authentication  
+- **Modern Fiori UI** with tested role-based access control
+- **Custom field editing** (Notes field) with authorization enforcement
+- **Role Collections testing** - Viewer vs Admin permissions validated
 - **Real-time monitoring** via Integration Suite dashboards
 - **Scalable cloud deployment** on Cloud Foundry platform
 
@@ -110,34 +140,4 @@ The legacy system cannot be modified, so SAP BTP acts as the **integration bridg
 - Real-time data transformation and enrichment  
 
 ---
-
-## 📁 Repository Structure
-
-```
-btp-legacy-integration-hub/
-├── cap-app/                           # Simulated legacy ECC system (CAP)
-│   ├── db/
-│   │   ├── data/                      # Sample data files
-│   │   └── schema.cds                 # Database schema definition
-│   ├── srv/
-│   │   └── legacy-service.cds         # Service definitions
-│   ├── package.json
-│   ├── xs-security.json               # XSUAA security configuration
-│   ├── mta.yaml                       # Multi-target application descriptor
-│   └── eslint.config.mjs              # ESLint configuration
-├── integration-suite/
-│   └── iflow/                         # Integration flow Groovy scripts
-│       ├── HasNewData.groovy          # Validates if OData response contains records
-│       ├── LogAndModify.groovy        # Data enrichment (tax calc, priority assignment)
-│       ├── SetTimestampFromMessage.groovy  # Retrieves last synchronization timestamp
-│       ├── SetTimestampToMessage.groovy    # Generates current UTC timestamp
-│       └── TransformOrdersToSQL.groovy     # JSON to SQL batch INSERT transformation
-├── hana-cloud/
-│   └── schema/
-│       └── createSchemaAndTable.sql   # HANA database schema creation
-├── docs/
-│   └── demo-screenshots/              # Project documentation and screenshots
-├── .gitignore
-└── README.md
-```
 
